@@ -1,52 +1,54 @@
 from preprocessor import Preprocessor
 from classifier import Classifier
 import sys
-import time
 import bz2
 import os
 
 
 def main():
+    file_names = get_files()
+    pre = Preprocessor(file_names, window_size=10)
+    classif = Classifier(len(pre.word_index))
+    embeddings = make_embeddings(file_names, pre, classif)
+    write_to_file(embeddings)
 
+
+def get_files():
     path = sys.argv[1]
     file_names = []
     for root, dir_names, f_names in os.walk(path):
         for f in f_names:
             file_names.append(os.path.join(root, f))
-
-    pre = Preprocessor(file_names, window_size = 10)
-    classif = Classifier(len(pre.word_index))
-
-    make_embeddings(file_names, pre, classif)
+    return file_names
 
 
 def make_embeddings(file_names, pre, classifier):
-
-    start = time.time()
     for f in file_names:
-        with bz2.open(f, 'rb') as fin:
+        with open(f, 'r') as fin:
             for line in fin:
-                line = line.decode()
-                if not line.startswith('<') and len(line) > 1:
-                    line = line.split()
-                    line = [pre[word] for word in line]
-                    print(line)
-                    skipgrams = pre.make_skipgrams(line)
+                # Converts each word to it's unique index
+                line = [pre[word] for word in line.split()]
+                # Gets the skipgram for each word in the line
+                skipgrams = pre.make_skipgrams(line)
 
-                    for i, word in enumerate(line):
-                        real_context = pre.positive_context(i, skipgrams)
-                        if (word != None and pre.subsample(word) and None not
-                        in real_context):
-                            fake_context = pre.negative_context(word)
-                            classifier.train(word, real_context, fake_context)
-    
-    end = time.time()
-    print('training time: ', end - start)
+                for i, word in enumerate(line):
+                    # Picks out a skipgram for the given word to act as it's
+                    # positive training example
+                    real_context = pre.positive_context(i, skipgrams)
+                    # Only train if word is in top 200k most common words, it's skipgram only contains 200k most common words and it's not subsampled
+                    if (word is not None and pre.subsample(word) and None
+                       not in real_context):
+                        fake_context = pre.negative_context(word)
+                        classifier.train(word, real_context, fake_context)
+    return classifier.context_matrix, pre.index_word
+
+
+def write_to_file(out_data):
     with open(sys.argv[2]+'.vec', 'w') as fout:
-        for i, vec in enumerate(classifier.target_matrix):
-            vec = str(list(vec))
-            fout.write(intex_to_word[i]+' '+vec+'\n')
+        for i, vec in enumerate(out_data[0]):
+            vec = ''.join(list(vec))
+            fout.write(out_data[1][i]+' '+vec+'\n')
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()
