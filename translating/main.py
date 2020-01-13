@@ -1,21 +1,24 @@
-"""This script acts as a user interface for the evaluation of a translation
-model.
+"""The main module acting as a user interface for training and evaluating a
+Translator object.
 
-Usage: python3 main.py
+Usage: python3 main.py l1_vector_file l2_vector_file
 """
 import numpy as np
 from vectorspace import VectorSpace
 from translator import Translator
-import pickle
 import sys
 
-# Loads pickled vectors
+# Loads vectors
+l1_vectors = []
+l2_vectors = []
 
 with open(sys.argv[1], 'rb') as f1:
-    l1_vectors = pickle.load(f1)    
+    for vec in f1:
+        l1_vectors.append(vec)
 
 with open(sys.argv[2], 'rb') as f2:
-    l2_vectors = pickle.load(f2)
+    for vec in f1:
+        l2_vectors.append(vec)
 
 # sets the total amount of words to use (for each vector space)
 total_data = 5000
@@ -37,8 +40,10 @@ l2_training_data = l2_vectors[:training_slice]
 l1_test_data = l1_vectors[training_slice:training_slice+test_slice]
 l2_test_data = l2_vectors[training_slice:training_slice+test_slice]
 
-l1_seed_data = l1_vectors[training_slice+test_slice:training_slice+test_slice+seed_slice]
-l2_seed_data = l2_vectors[training_slice+test_slice:training_slice+test_slice+seed_slice]
+l1_seed_data = l1_vectors[training_slice+test_slice:training_slice +
+                          test_slice+seed_slice]
+l2_seed_data = l2_vectors[training_slice+test_slice:training_slice +
+                          test_slice+seed_slice]
 
 # Instantiates one VectorSpace object for each of the languages, to train on
 l1_vs_train = VectorSpace(l1_training_data)
@@ -59,6 +64,3 @@ translator = Translator([l1_seed, l2_seed])
 translator.train(l1_vs_train, l2_vs_train)
 # Evaluates the trained Translator object using the test data
 translator.evaluate(l1_vs_test, l2_vs_test)
-
-
-
