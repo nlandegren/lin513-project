@@ -115,7 +115,7 @@ class Preprocessor(object):
         # Equals the number of words on either side of the target word.
         w = int(self.window_size / 2 - 1)
 
-        skipgram = {}
+        skipgrams = {}
 
         # Populates the skipgram dict with the line position index of a word
         # as key and it's skipgram as value
