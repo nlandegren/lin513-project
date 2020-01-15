@@ -19,21 +19,26 @@ def main():
     Gets training data from provided files and trains a classifier object with
     the help of a Preprocessor object.
     """
-    file_names = get_files()
+    file_names = get_files(sys.argv[1])
     pre = Preprocessor(file_names, window_size=10)
     classif = Classifier(len(pre.word_index))
     embeddings = make_embeddings(file_names, pre, classif)
-    write_to_file(embeddings)
+    write_to_file(sys.argv[2], embeddings)
 
 
-def get_files():
-    # The path to a directory
-    path = sys.argv[1]
+def get_files(dir_path):
+    """Makes a list of all the files to read through.
+    Args:
+        dir_path: The path to a directory containing the files to read.
+    Returns:
+        A list of the pathways leading to each file in dir_path, each as str
+        objects.
+    """
     file_names = []
     # Populates file_names with the path to each text file in the dir
-    for root, dir_names, f_names in os.walk(path):
+    for root, dir_names, f_names in os.walk(dir_path):
         for f in f_names:
-            file_names.append(os.path.join(root, f))
+            file_names.append(os.dir_path.join(root, f))
     return file_names
 
 
@@ -48,7 +53,7 @@ def make_embeddings(file_names, pre, classifier):
         index to word dict object.
     """
     for i, f in enumerate(file_names):
-        print(f'{i+1} out of {len(file_names)} files trained on')
+        print('{} out of {} files trained on'.format(i+1, len(file_names)))
         with open(f, 'r') as fin:
             for line in fin:
                 # Converts each word to it's unique index
@@ -57,7 +62,6 @@ def make_embeddings(file_names, pre, classifier):
                     continue
                 # Gets the skipgram for each word in the line
                 skipgrams = pre.make_skipgrams(line)
-                print(line)
                 for i, word in enumerate(line):
                     # Picks out a skipgram for the given word to act as it's
                     # positive training example
@@ -70,9 +74,9 @@ def make_embeddings(file_names, pre, classifier):
     return classifier.target_matrix, pre.index_word
 
 
-def write_to_file(out_data):
+def write_to_file(out_file_name, out_data):
     """Writes results to a text file."""
-    with open(sys.argv[2]+'.vec', 'w') as fout:
+    with open(out_file_name+'.vec', 'w') as fout:
         # Writes meta info to first row, number of embeddings and dimensions
         fout.write(str(len(out_data[0]))+' '+str(len(out_data[0][0]))+'\n')
         # Writes each word together with it's vector to text file

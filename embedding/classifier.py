@@ -13,10 +13,12 @@ class Classifier(object):
     """Represents a trainable classifier.
 
     Attributes:
-        target_matrix: A numpy.ndarray containing word embeddings as row
-        vectors.
-        context_matrix: A numpy.ndarray containing word embeddings as column
-        vectors.
+        target_matrix: A numpy.ndarray with 300 dimensions as default and
+        length equal to the word vocabulary containing word embeddings as row
+        vectors, acts as parameters for target words.
+        context_matrix: A numpy.ndarray with 300 dimensions as default and
+        length equal to the word vocabulary containing word embeddings as
+        column vectors, acts as parameters for context words.
     """
 
     def __init__(self, vocab_size, dim=300):
@@ -25,12 +27,12 @@ class Classifier(object):
         self.target_matrix = np.random.rand(vocab_size, dim)
         self.context_matrix = np.random.rand(dim, vocab_size)
 
-    def train(self, target_word, real_context, fake_context): 
+    def train(self, target_word, real_context, fake_context):
         """Uses received training data to train the embeddings of the
         classifier.
         Args:
-            target_word: An int object representing a target word training
-            example.
+            target_word: An int object representing a target word as a
+            training example.
             real_context: A skipgram as a list of int objects representing
             actual context words of the target word.
             fake_context: A list of int objects randomly picked from the
@@ -38,14 +40,15 @@ class Classifier(object):
         """
 
         def estimate_prob(target_word, context_words):
-            """Estimates the probability that context_words is an actual
-            skipgram of the target word.
+            """Estimates the probability that a set of words is a real context
+            of a given target word.
             Args:
                 target_word: A word represented by an int object.
                 context_words: A list of words represented by int objects.
             Returns:
                 The probability, as a float object, that context_words is a
-                real context of the target word."""
+                real context of target_word."""
+
             target_vector = self.target_matrix[target_word]
             context_prob = 1
             for word in context_words:
@@ -68,22 +71,25 @@ class Classifier(object):
                 target_word: A word represented by an int object.
                 context_words: A list of words represented by int objects.
                 prob: The probability that context_words is a real context of
-                the target word.
+                target_word.
                 label: 1 if context_words is a real context, 0 otherwise.
             """
+            # Sum of the context vectors
             context_sum = sum([self.context_matrix[:, c] for c
                               in context_words])
-            # Controls how large each parameter adjustment is.
+            # Controls how large each parameter adjustment is
             step_param = 0.1
+
             target_vector = self.target_matrix[target_word]
-            # Updates the target word vector.
+            # Updates the target word vector
             target_vector = (target_vector - step_param*(prob - label) *
                              context_sum)
             for context_word in context_words:
                 context_vector = self.context_matrix[:, context_word]
-                # Updates the context word vector.
+                # Updates the context word vector
                 context_vector = (context_vector - step_param*(prob - label) *
                                   target_vector)
+
         # Gets the probability of the real context
         probability = estimate_prob(target_word, real_context)
         # Updates parameters of the target word and real context
