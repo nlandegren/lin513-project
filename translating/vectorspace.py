@@ -27,21 +27,21 @@ class VectorSpace(object):
         vectors.
     """
 
-    def __init__(self, vector_list):
+    def __init__(self, vector_list, dim=300):
         """Initiates a VectorSpace object with a list containing lists, each
         of which contains a word as a str object and its word embedding as a
         list object."""
 
         self.vocabulary = []
         self.word_indexing = {}
-        self.matrix = np.zeros((len(vector_list), len(vector_list[0][1])))
+        self.matrix = np.zeros((len(vector_list), dim))
         self.vec_positions = list(range(len(vector_list)))
 
         # Populates the VectorSpace attributes with the word embeddings
         for i, vec in enumerate(vector_list):
             self.vocabulary.append(vec[0])
             self.word_indexing[vec[0]] = i
-            self.matrix[i] = np.asarray(vec[1], dtype=float)
+            self.matrix[i] = np.asarray(vec[1:], dtype=float)
 
     def align(self, target_space):
         """Produces a mapping matrix between this VectorSpace object and

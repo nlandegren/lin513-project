@@ -73,9 +73,11 @@ def make_embeddings(file_names, pre, classifier):
 def write_to_file(out_data):
     """Writes results to a text file."""
     with open(sys.argv[2]+'.vec', 'w') as fout:
+        # Writes meta info to first row, number of embeddings and dimensions
+        fout.write(str(len(out_data[0]))+' '+str(len(out_data[0][0]))+'\n')
         # Writes each word together with it's vector to text file
         for i, vec in enumerate(out_data[0]):
-            vec = ', '.join(list(str(f) for f in vec))
+            vec = ' '.join(list(str(f) for f in vec))
             fout.write(out_data[1][i]+' '+vec+'\n')
 
 
