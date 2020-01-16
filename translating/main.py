@@ -16,8 +16,8 @@ def main():
     l1_train_vs, l1_test_vs, l1_seed_vs = divide_data(l1_vectors)
     l2_train_vs, l2_test_vs, l2_seed_vs = divide_data(l2_vectors)
     translator = Translator([l1_seed_vs, l2_seed_vs])
-    translator.train(l1_train_vs, l2_train_vs)
-    translator.evaluate(l1_test_vs, l2_test_vs)
+    translator.train(l1_train_vs, l2_train_vs, train_iters=5)
+    translator.test(l1_test_vs, l2_test_vs)
 
 
 def get_data(filename):

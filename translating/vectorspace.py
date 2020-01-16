@@ -3,7 +3,7 @@
 Objects of the VectorSpace class should be used to represent a set of
 vectors. Vectors are stored in a numpy ndarray.
 
-    Usage example:
+    Usage:
 
     vector_space1 = VectorSpace(list_of_vectors)
     vector_space2 = VectorSpace(list_of_vectors)
@@ -12,7 +12,6 @@ vectors. Vectors are stored in a numpy ndarray.
 """
 
 import numpy as np
-from scipy.spatial import distance
 
 
 class VectorSpace(object):
@@ -59,14 +58,3 @@ class VectorSpace(object):
         u, s, vh = np.linalg.svd(dot_product, full_matrices=True)
         # returns mapping matrix
         return u.dot(vh)
-
-    def distance(self, target_space):
-        """Computes cosine distance between each vector of this object and
-        each vector of another.
-        Args:
-            target_space: A VectorSpace object to compute distance to.
-        Returns:
-            For two matrices A and B, returns an AxB distance numpy.ndarray.
-        """
-
-        return distance.cdist(self.matrix, target_space.matrix, 'cosine')
