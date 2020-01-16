@@ -1,5 +1,4 @@
 # lin513-project
----
 
 ### Description
 This project was apart of a course in applied programming for linguists at Stockholm University. The goal of the project was to implement a somewhat more complex program in python to solve a proplem in the area of computational linguistics. The purpose was to develop skills in structuring and documenting code in a readable and efficient way. I built two programs, one for implementing a machine translation algorithm as described by Artetxe et.  al.  2017, and a second program implementing the skipgram word2vec algorithm for word embedding [Mikolov et.  al.  2013].
@@ -36,30 +35,32 @@ $ python3 translation/main.py l1_vector_file l2_vector_file
 ```
 ---
 ### Documentation
+
 embedding/
-> embedding/preprocessor.py
+> embedding/preprocessor.py\
 This module contains the Preprocessor class. It prepares the data needed to train a classifier with the word2vec skipgram algorithm.
 
-> embedding/classifier.py
+> embedding/classifier.py\
 This module contains the Classifier class which performs the fake tast of classifying sets of words as real or fake contexts of a give target word. The parameters of the trained Classifier object is then used as word embeddings.
 
-> embedding/main.py
+> embedding/main.py\
 The main module of the 'embedding' directory. Uses instances of the Preprocessor class and Classifier class to make word embeddings.
 
-> embedding/similarity_test.py
+> embedding/similarity_test.py\
 A short script that prints out the five most similar word embeddings for a few random embeddings in a vector file.
 
-> embedding/make_parallel.py
+> embedding/make_parallel.py\
 A script that will take two files of word embeddings and output the embeddings sorted in parallel into new files.
 
 translation/
-> translation/vectorspace.py
+
+> translation/vectorspace.py\
 This module contains the VectorSpace class, which acts as a wrapper for a set of word embeddings. Instances of the class are used in training and testing of the translation model.
 
-> translation/translator.py
+> translation/translator.py\
 This module contains the Translator class. The class represents a machine translation model based on singular value decomposition.
 
-> translation/main.py
+> translation/main.py\
 The main module of the translation program. Uses instances of the VectorSpace class and Translator class to train and test the correctness of the translation algorithm.
 ---
 
