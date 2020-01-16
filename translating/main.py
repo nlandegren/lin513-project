@@ -10,11 +10,16 @@ import sys
 
 
 def main():
-
     l1_vectors = get_data(sys.argv[1])
     l2_vectors = get_data(sys.argv[2])
     l1_train_vs, l1_test_vs, l1_seed_vs = divide_data(l1_vectors)
     l2_train_vs, l2_test_vs, l2_seed_vs = divide_data(l2_vectors)
+
+    print(("Using training set of {} words, test set of {} words, "
+           "seed set of {} words".format(len(l1_train_vs.matrix),
+                                         len(l1_test_vs.matrix),
+                                         len(l1_seed_vs.matrix))))
+
     translator = Translator([l1_seed_vs, l2_seed_vs])
     translator.train(l1_train_vs, l2_train_vs, train_iters=5)
     translator.test(l1_test_vs, l2_test_vs)
