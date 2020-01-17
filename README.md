@@ -23,11 +23,11 @@ $ python3 embedding/main.py dir_containing_text_files
 ```
 To do a simple similarity test on your word embeddings:
 ```
-$ python3 embedding/similarity_test.py vector_file
+$ python3 embedding/similarity_test.py vector_file.vec
 ```
-To parallel-sort two vector files:
+To parallel-sort two vector files against a lexicon:
 ```
-$ python3 embedding/make_parallel.py l1_vector_file l2_vector_file
+$ python3 embedding/make_parallel.py l1-l2-lexicon.txt l1_vector_file.vec l2_vector_file.vec
 ```
 To test the translation model:
 ```
