@@ -19,8 +19,8 @@ def test_vectors():
     Reads in all the vectors from a given vector file, prints out similar
     vectors for a few random vectors, and prompts the user to test again.
     """
-    get_vectors(sys.argv[1])
-    main_loop()
+    vec_dict = get_vectors(sys.argv[1])
+    main_loop(vec_dict)
 
 
 def distance(vec1, vec2):
@@ -51,13 +51,17 @@ def get_vectors(filename):
     return vector_dict
 
 
-def main_loop():
-    """A loop performing the similarity tests until user enters 'n'."""
+def main_loop(vector_dict):
+    """A loop performing the similarity tests until user enters 'n'.
+    Args:
+        vector_dict: A dict object containing words associated with their
+        vectors.
+    """
     userword = input('press enter to test embeddings')
     # Loops until user enters 'n'
     while userword != 'n':
         # Picks five random vectors
-        picks = random.choices(list(vector_dict), k=5)
+        picks = [random.choice(list(vector_dict)) for i in range(5)]
         for word in picks:
             result = []
             for k, v in vector_dict.items():
