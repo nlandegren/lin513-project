@@ -4,8 +4,7 @@ The module takes a word lexicon and two files containing word embeddings
 and outputs two files that only contain parallel embeddings, i.e if a word
 embedding has a correct translation according to the lexicon, the two word
 embeddings are written out in parallel to their respective file. The format of
-the contents of the lexicon file should be: l1_word l2_word\n. Outputs files
-of the same name as the input vector files with added 'parallel' suffix.
+the contents of the lexicon file should be: l1_word l2_word\n.
 
     Usage:
     python3 make_parallel.py l1-l2_lexicon.txt l1.vec l2.vec
@@ -57,19 +56,17 @@ def make_vec_lexicon(filename, word_lexicon):
     return vec_lexicon
 
 
-def write_out(l1_word_lexicon, l1_vectors, l2_vectors, l1_fname, l2_fname):
+def write_out(l1_word_lexicon, l1_vectors, l2_vectors):
     """Writes out vectors to files in parallel, if they have translations in
     their respective languages.
     Args:
         l1_word_lexicon: A dict object containing translation pairs.
         l1_vectors: A dict object containing words and their vectors.
         l2_vectors: A dict object containing words and their vectors.
-        l1_fname: The filename of the l1 vector file.
-        l2_fname: The filename of the l2 vector file.
     """
     num_of_vecs = 0
-    with open('parallel'+l1_fname, 'w') as fout1:
-        with open('parallel'+l2_fname, 'w') as fout2:
+    with open('l1-parallel.vec', 'w') as fout1:
+        with open('l2-parallel.vec', 'w') as fout2:
             # For a given translation pair, if we have the vectors for both
             # words, writes them out in parallel to their respective files
             for k, v in l1_word_lexicon.items():
@@ -84,8 +81,7 @@ def main():
     l1_word_lexicon, l2_word_lexicon = make_word_lexicon(sys.argv[1])
     l1_vectors = make_vec_lexicon(sys.argv[2], l1_word_lexicon)
     l2_vectors = make_vec_lexicon(sys.argv[3], l2_word_lexicon)
-    write_out(l1_word_lexicon, l1_vectors, l2_vectors,
-              sys.argv[2], sys.argv[3])
+    write_out(l1_word_lexicon, l1_vectors, l2_vectors)
 
     print('done')
 
