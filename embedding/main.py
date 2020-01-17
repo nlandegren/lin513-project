@@ -1,8 +1,9 @@
-"""A module acting as a user interface for training word embeddings with
-word2vec.
+"""A main module acting as a user interface for the embedding program.
 
 The script uses a Preprocessor object to convert text into training data with
-which to train a Classifier object.
+which to train a Classifier object. The input to the script is expected to be
+the pathway to a directory containing the text files with the training data.
+
     Usage:
     python3 main.py path_to_dir
 """
@@ -16,14 +17,15 @@ import os
 def main():
     """The main function of the module.
 
-    Gets training data from provided files and trains a classifier object with
-    the help of a Preprocessor object.
+    Gets training data from provided files and trains a Classifier object with
+    the help of a Preprocessor object, then writes the resulting embeddings to
+    file.
     """
     file_names = get_files(sys.argv[1])
     pre = Preprocessor(file_names, window_size=10)
     classif = Classifier(len(pre.word_index))
-    embeddings = make_embeddings(file_names, pre, classif)
-    write_to_file(sys.argv[2], embeddings)
+    out_data = make_embeddings(file_names, pre, classif)
+    write_to_file(sys.argv[2], out_data)
 
 
 def get_files(dir_path):
@@ -35,7 +37,7 @@ def get_files(dir_path):
         objects.
     """
     file_names = []
-    # Populates file_names with the path to each text file in the dir
+    # Populates the list file_names with the path to each text file in the dir
     for root, dir_names, f_names in os.walk(dir_path):
         for f in f_names:
             file_names.append(os.dir_path.join(root, f))
@@ -74,9 +76,16 @@ def make_embeddings(file_names, pre, classifier):
     return classifier.target_matrix, pre.index_word
 
 
-def write_to_file(out_file_name, out_data):
-    """Writes results to a text file."""
-    with open(out_file_name+'.vec', 'w') as fout:
+def write_to_file(file_name, out_data):
+    """Writes results to a text file.
+    Args:
+        out_file_name: The name of the file to be written to.
+        out_data: The data returned from make_embeddings function, a 2-tuple
+        containing a numpy ndarray containing trained word embeddings and a
+        dict object associating each word embedding index as an int with their
+        actual words as str objects.
+    """
+    with open(file_name+'.vec', 'w') as fout:
         # Writes meta info to first row, number of embeddings and dimensions
         fout.write(str(len(out_data[0]))+' '+str(len(out_data[0][0]))+'\n')
         # Writes each word together with it's vector to text file

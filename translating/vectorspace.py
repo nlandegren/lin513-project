@@ -1,4 +1,4 @@
-"""This module defines the VectorSpace class.
+"""Contains the VectorSpace class.
 
 Objects of the VectorSpace class should be used to represent a set of
 vectors. Vectors are stored in a numpy ndarray.
@@ -8,7 +8,6 @@ vectors. Vectors are stored in a numpy ndarray.
     vector_space1 = VectorSpace(list_of_vectors)
     vector_space2 = VectorSpace(list_of_vectors)
     vector_space1.align(vector_space2)
-    vector_space1.distance(vector_space2)
 """
 
 import numpy as np
@@ -22,14 +21,12 @@ class VectorSpace(object):
         word_indexing: A dict containing every word in the vocabulary, each
         assigned an int as an index.
         matrix: A numpy ndarray containing word embeddings as row vectors.
-        vec_positions: A list of word indexes, in the same order as the row
-        vectors.
+        vec_positions: A list of integers, representing the positions of the
+        vectors in the matrix.
     """
 
     def __init__(self, vector_list, dim=300):
-        """Initiates a VectorSpace object with a list containing lists, each
-        of which contains a word as a str object and its word embedding as a
-        list object."""
+        """Initiates a VectorSpace object with a list of vectors."""
 
         self.vocabulary = []
         self.word_indexing = {}
@@ -43,11 +40,13 @@ class VectorSpace(object):
             self.matrix[i] = np.asarray(vec[1:], dtype=float)
 
     def align(self, target_space):
-        """Produces a mapping matrix between this VectorSpace object and
-        another.
+        """Estimates a mapping matrix between two vector spaces.
+
+        Produces mapping matrix between this VectorSpace object (self),
+        and another.
 
         Args:
-            target_space: A VectorSpace object to rotate towards.
+            target_space: A VectorSpace to estimate mapping matrix with.
 
         Returns:
             A mapping matrix as a numpy.ndarray.

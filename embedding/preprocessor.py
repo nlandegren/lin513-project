@@ -1,25 +1,33 @@
-"""This module processes raw text input to be used for training word
-embeddings.
+"""Contains the class Preprocessor.
 
-Usage Example:
+Objects of the class are used for processing raw text input to be used for
+training word embeddings. Words are converted to vocabulary indexes
+represented by ints and training data is prepared from each line of text fed
+to the methods of the class, in particular the skipgram method. Each method
+taking words as input expect them to be represented by int objects.
+
+A Preprocessor object is initialized with the entirety of the data and passes
+through all of it once before any training data can be retrieved.
+
+    Example:
     pre = Preprocessor(filename, window_size=10)
     skipgrams = pre.make_skipgrams(list_of_words_as_ints)
     real_context = pre.positive_context(target_word_position_in_line,
                                         skipgrams)
-    fake_context = pre.negative_context(target_word, window_size)
+    fake_context = pre.negative_context(target_word)
 """
+
 import numpy as np
 import math
 from collections import Counter
 
 
 class Preprocessor(object):
-    """A preprocessing unit that prepares training data for a word2vec
-    skipgram model.
+    """Represents a preprocessing unit for preparing training data.
 
     Attributes:
         word_index: A dict object associating every unique word with a unique
-        integer.
+        int object.
         index_word: Same as word_index but reversed keys and values.
         word_frequency: A Counter object containing each word's vocabulary
         index and it's frequency of occurrence.
@@ -28,8 +36,8 @@ class Preprocessor(object):
     """
 
     def __init__(self, data_file, window_size=10):
-        """Initializes a Preprocessor object with a file name and window
-        size."""
+        """Initializes a Preprocessor object with a file name and window size.
+        """
         self.word_index = {}
         self.index_word = {}
         self.word_frequency = Counter()
@@ -37,18 +45,18 @@ class Preprocessor(object):
         self.process_data(data_file)
 
     def __getitem__(self, word):
-        """Gets the index assigned to a given word, returns None if no index
-        exists"""
+        """If word is in 200k most common, returns the words index, else None.
+        """
         return self.word_index.get(word)
 
     def process_data(self, filenames):
-        """Populates the attributes with data from text file.
+        """Populates the objects attributes with data from text file.
 
         Reads through all the data and saves a unique index and the
-        word_frequencies of the 200k most common words.
+        word frequencies of the 200k most common words.
 
         Args:
-            filenames: A list object of pathways to text files as str objects
+            filenames: A list object of pathways to text files as str objects.
         """
         # Saves word frequencies
         for filename in filenames:
@@ -138,12 +146,13 @@ class Preprocessor(object):
     def subsample(self, word):
         """Calculates whether a sample word should be skipped in training.
 
-        Based on a probability computed from it's frequency of occurrence,
+        Based on a probability computed from their frequency of occurrence,
         more common words will be skipped more frequently.
 
         Args:
             word: A target word from the data, represented by it's index int
             object.
+
         Returns:
             False if the word should be discarded, True otherwise.
         """

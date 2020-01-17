@@ -1,5 +1,10 @@
-"""This module represents a classifier trainable with the word2vec skipgram
-algorithm.
+"""Contains the Classifier class.
+
+The Classifier class is trained with the word2vec skipgram algorithm. The
+classifier performs a fake task of classifying sets of words as real or fake
+contexts of a given target word. The parameters of the trained Classifier
+objects are the actual word embeddings. The class is intended to be used in
+conjunction with the Preprocessor class.
 
 Usage Example:
     classifier = Classifier(vocabulary_size)
@@ -28,8 +33,7 @@ class Classifier(object):
         self.context_matrix = np.random.rand(dim, vocab_size)
 
     def train(self, target_word, real_context, fake_context):
-        """Uses received training data to train the embeddings of the
-        classifier.
+        """Uses training data to train the parameters of the classifier.
         Args:
             target_word: An int object representing a target word as a
             training example.

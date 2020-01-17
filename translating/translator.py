@@ -3,40 +3,41 @@
 Translator objects takes two VectorSpace objects as input and aims to find an
 optimal mapping matrix between them using singular value decomposition.
 
-    Usage example:
-    translator = Translator(seed_data)
+    Example:
+    translator = Translator(l1_vectorspace, l2_vectorspace)
     translator.train(l1_vectorspace, l2_vectorspace)
     translator.test(l1_vectorspace, l2_vectorspace)
-"""
+
+Each vectorspace argument in the above example is expected to be a VectorSpace
+object."""
 
 import numpy as np
 from scipy.spatial import distance
 
 
 class Translator(object):
-    """Represents a translation model based on vector space alignment.
+    """Represents a trainable translator based on vector space alignment.
 
     Attributes:
         mapping_matrix: A mapping matrix as a numpy.ndarray.
-        train_iters: Number of iterations to be ran in training.
     """
 
-    def __init__(self, seed_data):
+    def __init__(self, source_vs, target_vs):
         """Initializes a Translator object with an initial set of training
         examples."""
 
-        self.mapping_matrix = seed_data[0].align(seed_data[1])
+        self.mapping_matrix = source_vs.align(target_vs)
 
     def train(self, source_vs, target_vs, train_iters=10):
         """Iteratively produces a better mapping matrix.
         Args:
-            source_vs: A VectorSpace object containing unaligned vectors for
-            training.
-            target_vs: A VectorSpace object containing unaligned vectors for
-            training.
-            train_iters: Number of iterations to perform in training.
+            source_vs, target_vs: A VectorSpace object containing unaligned
+            vectors for training.
+            train_iters: An int specifying the number of iterations to perform
+            in training.
         """
         for iterations in range(train_iters):
+            # Trains the attribute mapping_matrix
             self.estimate_translation(source_vs, target_vs)
             print("correctness in training:",
                   self.correctness(target_vs.vec_positions))
@@ -45,10 +46,8 @@ class Translator(object):
     def test(self, source_vs, target_vs):
         """Evaluates the trained mapping matrix on test data.
         Args:
-            source_vs: A VectorSpace object containing unaligned vectors for
-            testing.
-            target_vs: A VectorSpace object containing unaligned vectors for
-            testing.
+            source_vs, target_vs: A VectorSpace object containing unaligned
+            vectors for testing.
         """
         self.estimate_translation(source_vs, target_vs)
         print("correctness in testing:",
@@ -57,10 +56,8 @@ class Translator(object):
     def estimate_translation(self, source_vs, target_vs):
         """Learns a new mapping matrix between two vector spaces.
         Args:
-            source_vs: A VectorSpace object containing vectors for training/
-            testing.
-            target_vs: A VectorSpace object containing vectors for training/
-            testing.
+            source_vs, target_vs: A VectorSpace object containing vectors for
+            training/testing.
         """
         # Uses an initial mapping matrix to estimate a rotation of the source
         # space towards the target space
@@ -89,22 +86,26 @@ class Translator(object):
             target_matrix: A numpy ndarray representing the vector space in
             which to find nearest neighbors.
         Returns:
-            A semantic hub corrected similarity matrix containing for each
-            vector in the source matrix the index of the most similar target
-            vector.
+            An array of the indices of the most similar vector in the target
+            space for each vector in the source space.
         """
         # computes cosine similarity between each vector
         similarity_matrix = 1 - distance.cdist(source_matrix,
                                                target_matrix, 'cosine')
         # Computes average similarity between each vector and their
-        # ten most similar vectors for each of the vector spaces
-        sorted_dist_matrix = np.sort(similarity_matrix, axis=1)
-        rt = np.mean(sorted_dist_matrix[:, -10:], axis=1, keepdims=True)
-        sorted_dist_matrix = np.sort(similarity_matrix, axis=0)
-        st = np.mean(sorted_dist_matrix[-10:], axis=0, keepdims=True)
+        # ten most similar vectors for the source and target vector spaces
+        # respectively
+        sorted_similarity_matrix = np.sort(similarity_matrix, axis=1)
+        source_top_ten_mean = np.mean(sorted_similarity_matrix[:, -10:],
+                                      axis=1, keepdims=True)
+
+        sorted_similarity_matrix = np.sort(similarity_matrix, axis=0)
+        target_top_ten_mean = np.mean(sorted_similarity_matrix[-10:],
+                                      axis=0, keepdims=True)
 
         # Adjusts similarity score with average similarity
-        similarity_matrix = similarity_matrix - rt - st
+        similarity_matrix = similarity_matrix - target_top_ten_mean
+        - source_top_ten_mean
 
         return np.argmax(similarity_matrix, axis=1)
 

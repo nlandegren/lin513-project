@@ -1,10 +1,10 @@
 """Outputs all l1 vectors with their translated to l2 vectors in parallel.
 
-The module takes two files containing word embeddings and a word lexicon
+The module takes a word lexicon and two files containing word embeddings
 and outputs two files that only contain parallel embeddings, i.e if a word
 embedding has a correct translation according to the lexicon, the two word
-embeddings are written out in parallell to their respective file. The format of
-the contents of the lexicon file should be: 'l1_word l2_word\n'. Outputs files
+embeddings are written out in parallel to their respective file. The format of
+the contents of the lexicon file should be: l1_word l2_word\n. Outputs files
 of the same name as the input vector files with added 'parallel' suffix.
 
     Usage:
@@ -17,10 +17,14 @@ from collections import defaultdict
 
 def make_word_lexicon(filename):
     """Populates a dict object with translations from text file.
+
+    Only one the first translation in the given file for a given word is saved.
+
     Args:
-        filename: The pathway to a lexicon file as str object.
+        filename: The pathway to a lexicon file as a str object.
+
     Returns:
-        A dict object containing the translation pairs of the input text file.
+        Two dict objects together making a two way lexicon.
     """
     l1_word_lexicon = {}
     l2_word_lexicon = {}
@@ -34,7 +38,7 @@ def make_word_lexicon(filename):
 
 
 def make_vec_lexicon(filename, word_lexicon):
-    """Stores vectors in dict if they have translations.
+    """Stores vectors in a dict if they have translations.
     Args:
         filename: The pathway to a file containing vectors.
         word_lexicon: A dict object containing word translations.
