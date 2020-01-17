@@ -13,9 +13,11 @@ import sys
 
 def main():
     l1_vectors = get_data(sys.argv[1])
-    l2_vectors = get_data(sys.argv[2])
-    l1_train_vs, l1_test_vs, l1_seed_vs = divide_data(l1_vectors)
-    l2_train_vs, l2_test_vs, l2_seed_vs = divide_data(l2_vectors)
+    l2_vectors = get_data(sys.argv[2]) 
+    total_data = int(input('{}*2 word embeddings loaded, how many to'
+                     ' use?\n'.format(len(l1_vectors))))
+    l1_train_vs, l1_test_vs, l1_seed_vs = divide_data(l1_vectors, total_data)
+    l2_train_vs, l2_test_vs, l2_seed_vs = divide_data(l2_vectors, total_data)
     # Prints data size for training, test and seed sets
     print(("Using training set of {} words, test set of {} words, "
            "seed set of {} words".format(len(l1_train_vs.matrix),
@@ -39,7 +41,7 @@ def get_data(filename):
         return [vec.strip().split() for vec in f]
 
 
-def divide_data(vector_list):
+def divide_data(vector_list, total_data):
     """Divides the data into training, test and seed data.
     Args:
         vector_list: A list of vectors as list objects.
@@ -47,7 +49,7 @@ def divide_data(vector_list):
         A tuple of the vector list split up into three parts, one each for
         training, testing and seed data, default is 40%/40%/20% split.
     """
-    total_data = len(vector_list)
+    
 
     training_slice = int(0.4*total_data)
     test_slice = int(0.4*total_data)
