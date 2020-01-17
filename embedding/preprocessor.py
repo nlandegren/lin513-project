@@ -62,7 +62,7 @@ class Preprocessor(object):
         for filename in filenames:
             with open(filename, 'r') as fin:
                 for line in fin:
-                    line = line.split()
+                    line = line.lower().split()
                     self.word_frequency.update(line)
         # Saves only the 200k most common words
         self.word_frequency = dict(self.word_frequency.most_common(200000))

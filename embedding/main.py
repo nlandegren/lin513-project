@@ -12,7 +12,7 @@ from preprocessor import Preprocessor
 from classifier import Classifier
 import sys
 import os
-
+import time
 
 def main():
     """The main function of the module.
@@ -40,7 +40,7 @@ def get_files(dir_path):
     # Populates the list file_names with the path to each text file in the dir
     for root, dir_names, f_names in os.walk(dir_path):
         for f in f_names:
-            file_names.append(os.dir_path.join(root, f))
+            file_names.append(os.path.join(root, f))
     return file_names
 
 
@@ -55,11 +55,13 @@ def make_embeddings(file_names, pre, classifier):
         index to word dict object.
     """
     for i, f in enumerate(file_names):
-        print('{} out of {} files trained on'.format(i+1, len(file_names)))
+        start = time.time()
+        print('{} out of {} files trained on'.format(i, len(file_names)))
         with open(f, 'r') as fin:
             for line in fin:
                 # Converts each word to it's unique index
-                line = [pre[word] for word in line.split()]
+                line = [pre[word] for word in line.lower().split()]
+                # Skips very short lines and lines with rare words in them
                 if len(line) < 5 or None in line:
                     continue
                 # Gets the skipgram for each word in the line
@@ -68,11 +70,12 @@ def make_embeddings(file_names, pre, classifier):
                     # Picks out a skipgram for the given word to act as it's
                     # positive training example
                     real_context = pre.positive_context(i, skipgrams)
-                    # Only train on 200k most common words and according to
-                    # subsampling
+                    # Trains according to subsampling
                     if pre.subsample(word):
                         fake_context = pre.negative_context(word)
                         classifier.train(word, real_context, fake_context)
+        end = time.time()
+        print('training time on last file: {}'.format(end - start))
     return classifier.target_matrix, pre.index_word
 
 
