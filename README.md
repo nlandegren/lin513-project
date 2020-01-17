@@ -19,7 +19,7 @@ Run the code from your terminal as follows.
 
 To train word embeddings:
 ```
-$ python3 embedding/main.py dir_containing_text_files
+$ python3 embedding/main.py dir_containing_text_files outfile_name
 ```
 To do a simple similarity test on your word embeddings:
 ```
