@@ -3,7 +3,9 @@
 ### Description
 This project was apart of a course in applied programming for linguists at Stockholm University. The goal of the project was to implement a somewhat more complex program in python to solve a proplem in the area of computational linguistics. The purpose was to develop skills in structuring and documenting code in a readable and efficient way. I built two programs, one for implementing a machine translation algorithm as described by Artetxe et.  al.  2017, and a second program implementing the skipgram word2vec algorithm for word embedding [Mikolov et.  al.  2013].
 
-The two programs consists of a directory each: 'embedding' and 'translation'. The directory 'embedding' contains several python scripts used to create and test word embeddings. The directory 'translation' contains python scripts used to train and evaluate the translation model. 
+The two programs consists of a directory each: 'embedding' and 'translation'. The directory 'embedding' contains several python scripts used to create and test word embeddings. The directory 'translation' contains python scripts used to train and evaluate the translation model.
+
+NOTE: this project is for learning purposes only. To actually learn word embeddings, see libraries such as [fasttext](https://fasttext.cc/) or [VecMap](https://github.com/artetxem/vecmap).
 
 ---
 
